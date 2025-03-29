@@ -97,9 +97,7 @@ function updateWordCount() {
     const words = text.length > 0 ? text.split(/\s+/).length : 0; // Count words
     document.getElementById('wordCount').textContent = `Words in the document: ${words}`; // Update UI
 }
-window.addEventListener("beforeunload", function () {
-    localStorage.removeItem('savedNote');
-});
+
 // Bind the function to detect real-time changes in the editor
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('editor').addEventListener('input', updateWordCount);
