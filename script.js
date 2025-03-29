@@ -3,6 +3,38 @@ function toggleDarkMode() {
     document.body.classList.toggle("dark-mode");
     localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
 }
+
+function startDictation() {
+    if ('webkitSpeechRecognition' in window) {
+        let recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "en-US";
+
+        // Show the "Listening" UI
+        let listeningIndicator = document.getElementById("listeningIndicator");
+        listeningIndicator.classList.remove("d-none");
+
+        recognition.start();
+
+        recognition.onresult = function (event) {
+            let transcript = event.results[0][0].transcript;
+            document.getElementById("editor").innerHTML += transcript + " ";
+        };
+
+        recognition.onerror = function (event) {
+            alert("Error occurred: " + event.error);
+        };
+
+        recognition.onend = function () {
+            // Hide the "Listening" UI after finishing
+            listeningIndicator.classList.add("d-none");
+        };
+    } else {
+        alert("Speech recognition not supported in this browser.");
+    }
+}
+
 function formatText(command) {
     document.execCommand(command, false, null);
     updateActiveButtons();
@@ -84,6 +116,9 @@ function clearNote() {
         localStorage.removeItem('savedNote');
     }
 }
+window.addEventListener("beforeunload", function () {
+    sessionStorage.clear();
+});
 
 document.addEventListener('keydown', function (event) {
     if (event.ctrlKey && event.key === 's') {
